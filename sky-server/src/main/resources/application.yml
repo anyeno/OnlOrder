@@ -46,4 +46,9 @@ sky:
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
+  alioss:
+    endpoint: ${sky.alioss.endpoint-dev}
+    access-key-id: ${sky.alioss.access-key-id-dev}
+    access-key-secret: ${sky.alioss.access-key-secret-dev}
+    bucket-name: ${sky.alioss.bucket-name-dev}
 
