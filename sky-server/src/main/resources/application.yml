@@ -43,6 +43,9 @@ sky:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+    user-secret-key: itheima
+    user-ttl: 7200000
+    user-token-name: authentication
   datasource:
     host: localhost
     port: 3306
@@ -55,4 +58,7 @@ sky:
     access-key-id: ${sky.alioss.access-key-id-dev}
     access-key-secret: ${sky.alioss.access-key-secret-dev}
     bucket-name: ${sky.alioss.bucket-name-dev}
+  wechat:
+    appid: ${sky.wechat.appid}
+    secret: ${sky.wechat.secret}
 
