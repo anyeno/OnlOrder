@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,8 @@ public class DishController {
 
     @Autowired
     private DishService dishService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 新增菜品
@@ -39,6 +42,10 @@ public class DishController {
     public Result save(@RequestBody DishDTO dishDTO) {
         log.info("新增菜品：{}", dishDTO);
         dishService.saveWithFlavor(dishDTO);//后绪步骤开发
+
+        // 缓存优化-删除缓存
+        redisTemplate.delete("dish_"+dishDTO.getCategoryId());
+
         return Result.success();
     }
 
@@ -67,6 +74,10 @@ public class DishController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("菜品批量删除：{}", ids);
         dishService.deleteBatch(ids);//后绪步骤实现
+        // 将菜品缓存全部删除
+        Set keys = redisTemplate.keys("dish_*");
+        redisTemplate.delete(keys);
+
         return Result.success();
     }
 
@@ -95,6 +106,9 @@ public class DishController {
     public Result update(@RequestBody DishDTO dishDTO) {
         log.info("修改菜品：{}", dishDTO);
         dishService.updateWithFlavor(dishDTO);
+        // 修改菜品可以修改种类 所以要把这个种类的缓存全部删掉 直接全部删除
+        Set keys = redisTemplate.keys("dish_*");
+        redisTemplate.delete(keys);
         return Result.success();
     }
 
@@ -108,5 +122,14 @@ public class DishController {
         log.info("根据分类查询菜品 category id{}", category_id);
         List<Dish> res = dishService.getByCategoryId(category_id);
         return Result.success(res);
+    }
+
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("菜品起售 停售 status={}, id={}", status, id);
+        dishService.startOrStop(status, id);
+        Set keys = redisTemplate.keys("dish_*");
+        redisTemplate.delete(keys);
+        return Result.success();
     }
 }
