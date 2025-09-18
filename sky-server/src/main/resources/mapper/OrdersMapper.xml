@@ -4,10 +4,10 @@
 
     <insert id="insert" parameterType="Orders" useGeneratedKeys="true" keyProperty="id">
         insert into orders
-        (number, status, user_id, address_book_id, order_time, checkout_time, pay_method, pay_status, amount, remark,
+        (number, status, user_id, user_name, address_book_id, order_time, checkout_time, pay_method, pay_status, amount, remark,
          phone, address, consignee, estimated_delivery_time, delivery_status, pack_amount, tableware_number,
          tableware_status)
-        values (#{number}, #{status}, #{userId}, #{addressBookId}, #{orderTime}, #{checkoutTime}, #{payMethod},
+        values (#{number}, #{status}, #{userId}, #{userName}, #{addressBookId}, #{orderTime}, #{checkoutTime}, #{payMethod},
                 #{payStatus}, #{amount}, #{remark}, #{phone}, #{address}, #{consignee},
                 #{estimatedDeliveryTime}, #{deliveryStatus}, #{packAmount}, #{tablewareNumber}, #{tablewareStatus})
     </insert>
@@ -42,4 +42,38 @@
         </set>
         where id = #{id}
     </update>
+
+    <select id="getByUserIdAndStatus" resultType="com.sky.entity.Orders">
+        select * from orders
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by order_time desc
+    </select>
+
+    <select id="pageQuery" resultType="com.sky.entity.Orders">
+        select * from orders
+        <where>
+            <if test="number != null and number != '' ">
+                number = #{number}
+            </if>
+            <if test="beginTime != null">
+                and order_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and order_time &lt;= #{endTime}
+            </if>
+            <if test="phone != null">
+                and phone = #{phone}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
 </mapper>

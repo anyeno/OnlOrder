@@ -1,7 +1,10 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.core.annotation.Order;
 
 public interface OrdersMapper {
     void insert(Orders orders);
@@ -19,4 +22,19 @@ public interface OrdersMapper {
      * @param orders
      */
     void update(Orders orders);
+
+    /**
+     * 根据订单id查询订单
+     * @param id
+     */
+    @Select("select * from orders where id = #{id}")
+    Orders getById(Long id);
+
+
+    Page<Orders> getByUserIdAndStatus(Long userId, Integer status);
+
+    @Select("select count(*) from orders where status=#{status}")
+    Integer selectCountByStatus(Integer status);
+
+    Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 }
