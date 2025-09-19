@@ -49,4 +49,6 @@ public interface OrdersService {
     void deliveryOrder(Long id);
 
     Boolean isAccessAble(OrdersSubmitDTO ordersSubmitDTO);
+
+    void reminder(Long id);
 }
