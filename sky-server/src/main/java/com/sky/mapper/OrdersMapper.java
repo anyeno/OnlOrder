@@ -6,6 +6,9 @@ import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.core.annotation.Order;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public interface OrdersMapper {
     void insert(Orders orders);
 
@@ -37,4 +40,13 @@ public interface OrdersMapper {
     Integer selectCountByStatus(Integer status);
 
     Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    /**
+     * 查询状态且下单时间小于某时间的orders
+     * @param status
+     * @param time
+     * @return
+     */
+    @Select("select * from orders where status=#{status} and order_time < #{time}")
+    List<Orders> selectBYStatusAndOrderTime(Integer status, LocalDateTime time);
 }
