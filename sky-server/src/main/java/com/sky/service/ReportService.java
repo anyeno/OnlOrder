@@ -5,6 +5,7 @@ import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.UserReportVO;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 
 @Service
@@ -32,4 +33,6 @@ public interface ReportService {
      * @return
      */
     SalesTop10ReportVO getSalesTop10(LocalDate begin, LocalDate end);
+
+    void exportBusinessData(HttpServletResponse response);
 }

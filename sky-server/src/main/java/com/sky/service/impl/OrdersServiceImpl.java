@@ -147,6 +147,7 @@ public class OrdersServiceImpl implements OrdersService {
         map.put("content", "订单号: "+ordersPaymentDTO.getOrderNumber());
 
         webSocketServer.sendToAllClient(JSON.toJSONString(map));
+
         OrderPaymentVO vo = new OrderPaymentVO();
         return vo;
     }
