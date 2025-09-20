@@ -17,12 +17,10 @@ import com.sky.service.OrdersService;
 import com.sky.utils.DistanceCalculator;
 import com.sky.utils.HttpClientUtil;
 import com.sky.utils.WeChatPayUtil;
-import com.sky.vo.OrderPaymentVO;
-import com.sky.vo.OrderStatisticsVO;
-import com.sky.vo.OrderSubmitVO;
-import com.sky.vo.OrderVO;
+import com.sky.vo.*;
 import com.sky.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Slf4j
@@ -420,6 +420,39 @@ public class OrdersServiceImpl implements OrdersService {
         map.put("orderId", id);
         map.put("content", "订单号: "+ orders.getNumber());
         webSocketServer.sendToAllClient(JSON.toJSONString(map));
+    }
+
+    /**
+     * 查询时间段的营业额
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    @Override
+    public TurnoverReportVO turnoverStatistics(LocalDate startDate, LocalDate endDate) {
+        List<LocalDate> dateList = new ArrayList<>();
+        while(!startDate.isAfter(endDate)){
+            dateList.add(startDate);
+            startDate = startDate.plusDays(1);
+        }
+        List<Double> turnoverList = new ArrayList<>();
+        for (LocalDate date : dateList) {
+            LocalDateTime beginTime = LocalDateTime.of(date, LocalTime.MIN);
+            LocalDateTime endTime = LocalDateTime.of(date, LocalTime.MAX);
+            Map map = new HashMap();
+            map.put("status", Orders.COMPLETED);
+            map.put("begin",beginTime);
+            map.put("end", endTime);
+            Double turnover = ordersMapper.sumByMap(map);
+            turnover = turnover == null ? 0.0 : turnover;
+            turnoverList.add(turnover);
+        }
+
+        //数据封装
+        return TurnoverReportVO.builder()
+                .dateList(StringUtils.join(dateList,","))
+                .turnoverList(StringUtils.join(turnoverList,","))
+                .build();
     }
 
 }

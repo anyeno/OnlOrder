@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.xmlbeans.impl.xb.xmlconfig.Extensionconfig;
 
+import java.util.Map;
+
 @Mapper
 public interface UserMapper {
 
@@ -19,4 +21,11 @@ public interface UserMapper {
 
     @Select("select * from user where id=#{currentId}")
     User selectById(Long currentId);
+
+    /**
+     * 根据动态条件统计用户数量
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map map);
 }

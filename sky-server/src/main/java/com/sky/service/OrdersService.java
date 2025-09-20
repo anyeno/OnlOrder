@@ -2,12 +2,11 @@ package com.sky.service;
 
 import com.sky.dto.*;
 import com.sky.result.PageResult;
-import com.sky.vo.OrderPaymentVO;
-import com.sky.vo.OrderStatisticsVO;
-import com.sky.vo.OrderSubmitVO;
-import com.sky.vo.OrderVO;
+import com.sky.vo.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 public interface OrdersService {
@@ -51,4 +50,6 @@ public interface OrdersService {
     Boolean isAccessAble(OrdersSubmitDTO ordersSubmitDTO);
 
     void reminder(Long id);
+
+    TurnoverReportVO turnoverStatistics(LocalDate startDate, LocalDate endDate);
 }
